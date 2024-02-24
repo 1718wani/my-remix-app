@@ -18,10 +18,13 @@
     "@remix-run/node": "^2.7.2",
     "@remix-run/react": "^2.7.2",
     "@remix-run/serve": "^2.7.2",
+    "@tabler/icons-react": "^2.47.0",
     "isbot": "^4.1.0",
     "prisma": "^5.10.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.0.1",
+    "remix-routes": "^1.7.2"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.7.2",

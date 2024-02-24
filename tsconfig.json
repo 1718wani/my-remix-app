@@ -1,6 +1,11 @@
 {
   "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx"],
   "compilerOptions": {
+    "plugins": [
+      {
+        "name": "typescript-remix-routes-plugin"
+      }
+    ],
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "isolatedModules": true,
     "esModuleInterop": true,
