@@ -32,7 +32,6 @@ export default function App() {
       <body>
         <MantineProvider>
           <HeaderComponent />
-
           <Outlet />
           <ScrollRestoration />
           <Scripts />
