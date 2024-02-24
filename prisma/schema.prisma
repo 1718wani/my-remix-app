@@ -18,5 +18,5 @@ model Radioshows {
   id         Int        @id @default(autoincrement())
   createdAt  DateTime   @default(now())
   title      String
-  description String?
+  imageUrl   String?
 }
