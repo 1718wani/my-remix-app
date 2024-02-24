@@ -14,9 +14,50 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Radioshows {
-  id         Int        @id @default(autoincrement())
-  createdAt  DateTime   @default(now())
+model User {
+  id             String        @unique @default(cuid())
+  email          String        @unique
+  name           String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  createdHighlights  Highlight[]
+  userHighlights UserHighlight[]
+}
+
+model Radioshow {
+  id         Int         @id @default(autoincrement())
+  createdAt  DateTime    @default(now())
   title      String
   imageUrl   String?
+  highlights Highlight[]
+}
+
+model Highlight {
+  id             Int             @id @default(autoincrement())
+  title          String
+  description    String
+  replayUrl    String
+  replayTime   String // 形式: HH:mm:ss
+  Views         Int
+  createdBy      User            @relation(fields: [userId], references: [id])
+  userId         String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  radioshow      Radioshow       @relation(fields: [radioshowId], references: [id])
+  radioshowId    Int
+  userHighlights UserHighlight[]
+}
+
+model UserHighlight {
+  user        User        @relation(fields: [userId], references: [id])
+  userId      String
+  highlights  Highlight  @relation(fields: [highlightsId], references: [id])
+  highlightsId Int
+  played      Boolean     @default(false)
+  favorited   Boolean     @default(false)
+  liked       Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@id([userId, highlightsId])
 }
