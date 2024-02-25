@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import { createUser } from "~/features/Auth/apis/createUser";
 import { IconX } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
+import { checkUserExists } from "~/features/Auth/apis/checkUserExists";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await authenticator.isAuthenticated(request, {
@@ -35,17 +36,13 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   // 入力値が問題なければデータベースのデータを使った検証を行うサンプル
-  //   if (await userEx(submission.value.name)) {
-  //     return json({
-  //       success: false,
-  //       message: "error!",
-  //       submission: submission.reply({
-  //         fieldErrors: {
-  //           name: ["This name cannot be used"],
-  //         },
-  //       }),
-  //     });
-  //   }
+    if (await checkUserExists(submission.value.email)) {
+      return json({
+        success: false,
+        message: "このメールアドレスはすでに登録されています",
+        submission: submission.reply()
+      });
+    }
   await createUser(submission.value);
   // 同時にこのタイミングでクッキー付与したい
   return redirect("/signin")
