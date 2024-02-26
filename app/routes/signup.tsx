@@ -6,7 +6,14 @@ import {
 } from "@remix-run/node";
 import { Link, Form, useActionData } from "@remix-run/react";
 import { authenticator } from "~/features/Auth/services/authenticator";
-import { Button, PasswordInput, Stack, Text, TextInput } from "@mantine/core";
+import {
+  Button,
+  PasswordInput,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+} from "@mantine/core";
 import { z } from "zod";
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
@@ -35,17 +42,16 @@ export async function action({ request }: ActionFunctionArgs) {
     });
   }
 
-  // 入力値が問題なければデータベースのデータを使った検証を行うサンプル
-    if (await checkUserExists(submission.value.email)) {
-      return json({
-        success: false,
-        message: "このメールアドレスはすでに登録されています",
-        submission: submission.reply()
-      });
-    }
+  // emailが存在していたらチェックする
+  if (await checkUserExists(submission.value.email)) {
+    return json({
+      success: false,
+      message: "このメールアドレスはすでに登録されています",
+      submission: submission.reply(),
+    });
+  }
   await createUser(submission.value);
-  // 同時にこのタイミングでクッキー付与したい
-  return redirect("/signin")
+  return redirect("/signin");
 }
 
 const schema = z.object({
@@ -97,8 +103,12 @@ export default function Signup() {
 
   return (
     <>
+      
       <Form method="post" {...getFormProps(form)}>
-        <Stack gap="md" mx={"xl"}>
+        <Stack gap="md" mx={"xl"} mt={"lg"}>
+        <Title  order={2}>
+        新規ユーザー登録
+      </Title>
           <TextInput
             {...getInputProps(name, { type: "text" })}
             name="name"
