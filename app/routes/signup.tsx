@@ -103,12 +103,9 @@ export default function Signup() {
 
   return (
     <>
-      
       <Form method="post" {...getFormProps(form)}>
         <Stack gap="md" mx={"xl"} mt={"lg"}>
-        <Title  order={2}>
-        新規ユーザー登録
-      </Title>
+          <Title order={2}>新規ユーザー登録</Title>
           <TextInput
             {...getInputProps(name, { type: "text" })}
             name="name"

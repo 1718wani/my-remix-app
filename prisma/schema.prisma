@@ -36,10 +36,10 @@ model Radioshow {
 model Highlight {
   id             Int             @id @default(autoincrement())
   title          String
-  description    String
+  description    String          @default("")
   replayUrl    String
-  replayTime   String // 形式: HH:mm:ss
-  Views         Int
+  replayTime   String? // 形式: HH:mm:ss
+  Views         Int              @default(0)
   createdBy      User            @relation(fields: [userId], references: [id])
   userId         String
   createdAt      DateTime        @default(now())
@@ -55,7 +55,7 @@ model UserHighlight {
   highlights  Highlight  @relation(fields: [highlightsId], references: [id])
   highlightsId Int
   played      Boolean     @default(false)
-  favorited   Boolean     @default(false)
+  saved       Boolean     @default(false)
   liked       Boolean     @default(false)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt

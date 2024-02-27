@@ -7,10 +7,10 @@ type props = {
 };
 
 export const RadioShowsCard = (props: props) => {
-  const { imageUrl, title} = props;
+  const { imageUrl, title } = props;
 
   return (
-    <NavLink to={"/1"}>
+    <NavLink to={"/1"} style={{ textDecoration: "none" }}>
       <Card shadow="sm" padding="xl" component="a" withBorder>
         <Card.Section>
           <Image src={imageUrl} h={160} />
@@ -19,8 +19,6 @@ export const RadioShowsCard = (props: props) => {
         <Text fw={500} size="lg" mt="md">
           {title}
         </Text>
-
-       
       </Card>
     </NavLink>
   );
