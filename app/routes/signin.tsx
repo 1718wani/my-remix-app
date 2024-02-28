@@ -1,4 +1,4 @@
-import { getFormProps, useForm } from "@conform-to/react";
+import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import {
   Button,
@@ -18,6 +18,7 @@ import {
 import { Form, Link, useActionData } from "@remix-run/react";
 import { IconX } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { AuthorizationError } from "remix-auth";
 import { z } from "zod";
 import { checkUserExists } from "~/features/Auth/apis/checkUserExists";
 import { authenticator } from "~/features/Auth/services/authenticator";
@@ -31,7 +32,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export async function action({ request }: ActionFunctionArgs) {
-  const formData = await request.formData();
+  const clonedData = request.clone();
+  const formData = await clonedData.formData();
   const submission = parseWithZod(formData, { schema });
 
   if (submission.status !== "success") {
@@ -52,15 +54,27 @@ export async function action({ request }: ActionFunctionArgs) {
     });
   }
 
-  const userId = await authenticator.authenticate("user-signin", request, {
-    failureRedirect: "/signin",
-  });
+  try {
+    const userId = await authenticator.authenticate("user-signin", request, {
+      failureRedirect: "/signin",
+    });
 
-  const session = await getSession(request.headers.get("cookie"));
-  session.set(authenticator.sessionKey, userId);
-  // commit the session
-  const headers = new Headers({ "Set-Cookie": await commitSession(session) });
-  return redirect("/success", { headers });
+    const session = await getSession(request.headers.get("cookie"));
+    session.set(authenticator.sessionKey, userId);
+    // commit the session
+    const headers = new Headers({ "Set-Cookie": await commitSession(session) });
+    return redirect("/success", { headers });
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      return json({
+        success: false,
+        message: error.message,
+      });
+    } else {
+      console.log("失敗しました",error)
+      return null;
+    }
+  }
 }
 
 const schema = z.object({
@@ -115,6 +129,7 @@ export default function Signin() {
         <Stack gap="md" mx={"xl"} mt={"lg"}>
           <Title order={2}>ログイン</Title>
           <TextInput
+            {...getInputProps(email, { type: "email" })}
             name="email"
             placeholder="メールアドレス"
             label="Email"
@@ -122,6 +137,7 @@ export default function Signin() {
           />
 
           <PasswordInput
+            {...getInputProps(password, { type: "password" })}
             name="password"
             placeholder="パスワード"
             label="Password"

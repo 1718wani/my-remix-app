@@ -32,6 +32,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
+  console.log(formData, "requestSignup");
   const submission = parseWithZod(formData, { schema });
 
   if (submission.status !== "success") {
@@ -115,6 +116,7 @@ export default function Signup() {
           />
 
           <TextInput
+            {...getInputProps(email, { type: "email" })}
             name="email"
             placeholder="メールアドレス"
             label="Email"
@@ -122,6 +124,7 @@ export default function Signup() {
           />
 
           <PasswordInput
+            {...getInputProps(password, { type: "password" })}
             name="password"
             placeholder="パスワード"
             label="Password"
