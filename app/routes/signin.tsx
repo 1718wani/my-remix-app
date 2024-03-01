@@ -18,7 +18,6 @@ import {
 import { Form, Link, useActionData } from "@remix-run/react";
 import { IconX } from "@tabler/icons-react";
 import { useEffect } from "react";
-import { AuthorizationError } from "remix-auth";
 import { z } from "zod";
 import { checkUserExists } from "~/features/Auth/apis/checkUserExists";
 import { authenticator } from "~/features/Auth/services/authenticator";
@@ -65,15 +64,11 @@ export async function action({ request }: ActionFunctionArgs) {
     const headers = new Headers({ "Set-Cookie": await commitSession(session) });
     return redirect("/success", { headers });
   } catch (error) {
-    if (error instanceof AuthorizationError) {
-      return json({
-        success: false,
-        message: error.message,
-      });
-    } else {
-      console.log("失敗しました",error)
-      return null;
-    }
+    return json({
+      success: false,
+      message: "パスワードが異なっています",
+      submission: submission.reply(),
+    });
   }
 }
 
