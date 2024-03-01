@@ -33,6 +33,7 @@ export default function Index() {
               key={card.id}
               imageUrl={card.imageUrl ?? "https://picsum.photos/200/300"}
               title={card.title}
+              
             />
           </Grid.Col>
         ))}

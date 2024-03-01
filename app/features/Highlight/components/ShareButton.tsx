@@ -2,9 +2,9 @@ import { Button } from "@mantine/core";
 import { NavLink } from "@remix-run/react";
 import "./ShareButton.module.css"
 
-export const ShareButton = () => {
+export const ShareButton = ({ radioshowId }: { radioshowId: number }) => {
   return (
-    <NavLink to={"/1/share"}>
+    <NavLink to={`/${radioshowId}/share`}>
       <Button
         className="pulse-button"
         variant="filled"

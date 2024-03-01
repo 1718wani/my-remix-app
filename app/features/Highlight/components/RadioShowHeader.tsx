@@ -1,6 +1,14 @@
 import { AspectRatio, Box, Image, Overlay, Title } from "@mantine/core";
 
-export const RadioShowHeader = () => {
+type RadioShowHeaderProps = {
+  radioshowImageUrl: string | null;
+  radioshowTitle: string;
+};
+
+export const RadioShowHeader = ({
+  radioshowImageUrl,
+  radioshowTitle,
+}: RadioShowHeaderProps) => {
   return (
     <>
       <AspectRatio
@@ -10,11 +18,10 @@ export const RadioShowHeader = () => {
         style={{ position: "relative" }}
       >
         <Image
-          src={
-            "https://www.allnightnippon.com/wp/assets/uploads/2021/03/4a736cbd7927c15338fa9fe13bae42f2.jpg"
-          }
+          src={radioshowImageUrl}
           w={"full"}
           h={160}
+          fallbackSrc="https://placehold.co/600x400?text=Placeholder"
         />
         <Overlay
           gradient="linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 60%)"
@@ -29,7 +36,7 @@ export const RadioShowHeader = () => {
             style={{ position: "absolute", left: 0, bottom: 0, zIndex: 1000 }}
             p={8}
           >
-            霜降り明星のオールナイトニッポン
+            {radioshowTitle}
           </Title>
         </Box>
       </AspectRatio>

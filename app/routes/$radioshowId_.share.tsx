@@ -4,28 +4,42 @@ import { Button, Stack, TextInput, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import {
   ActionFunctionArgs,
-  LoaderFunction,
+  LoaderFunctionArgs,
   json,
   redirect,
 } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
+import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { IconX } from "@tabler/icons-react";
 import { useEffect } from "react";
 import { z } from "zod";
 import { authenticator } from "~/features/Auth/services/authenticator";
 import { RadioShowHeader } from "~/features/Highlight/components/RadioShowHeader";
+import invariant from "tiny-invariant";
+import { createHighlight } from "~/features/Highlight/apis/createHighlight";
+import { validateHighlightData } from "~/features/Highlight/functions/validateHighlightData";
+import { getRadioshowById } from "~/features/Radioshow/apis/getRadioshoById";
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader = async ({ params, request }:LoaderFunctionArgs) => {
+  invariant(params.radioshowId, "Missing contactId param");
+  const radioshowId = parseInt(params.radioshowId, 10);
+  invariant(!isNaN(radioshowId), "radioshowId must be a number");
+  const radioshow = await getRadioshowById(radioshowId);
+  invariant(radioshow, "radioshow not found");
+ 
   const user = await authenticator.isAuthenticated(request, {
-    successRedirect: "/",
+    failureRedirect: "/signin",
   });
-  return { user };
+  return json({ user, radioshow });
 };
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ params, request }: ActionFunctionArgs) {
+  invariant(params.radioshowId, "Missing contactId param");
   const formData = await request.formData();
-  console.log(formData.get("description"), "requestData");
+  const newFormData = Object.fromEntries(formData);
   const submission = parseWithZod(formData, { schema });
+  // radioshowIdを数値型に変換
+  const radioshowId = parseInt(params.radioshowId, 10);
+  invariant(!isNaN(radioshowId), "radioshowId must be a number");
 
   if (submission.status !== "success") {
     return json({
@@ -35,7 +49,20 @@ export async function action({ request }: ActionFunctionArgs) {
     });
   }
 
-  return redirect("/1");
+  const highlightData = {
+    ...newFormData,
+    radioshowId: radioshowId, // 数値型に変換したradioshowIdを追加
+  };
+  // highlightDataがcreateHighlightType型に合致するか検証
+  try {
+    validateHighlightData(highlightData);
+  } catch (error) {
+    return json({ success: false, message: (error as Error).message });
+  }
+
+  await createHighlight(highlightData, request);
+
+  return redirect(`/${radioshowId}`);
 }
 
 const schema = z.object({
@@ -47,6 +74,7 @@ const schema = z.object({
 });
 
 export default function HightlightShare() {
+  const { radioshow } = useLoaderData<typeof loader>();
   const data = useActionData<typeof action>();
   const [form, { title, description, replayUrl }] = useForm({
     onValidate({ formData }) {
@@ -81,7 +109,10 @@ export default function HightlightShare() {
 
   return (
     <>
-      <RadioShowHeader />
+      <RadioShowHeader
+        radioshowImageUrl={radioshow.imageUrl}
+        radioshowTitle={radioshow.title}
+      />
       <Form method="post" {...getFormProps(form)}>
         <Stack gap="md" mx={"xl"} mt={"lg"}>
           <Title order={2}>ハイライトシェア</Title>
