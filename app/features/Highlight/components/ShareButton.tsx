@@ -7,9 +7,10 @@ export const ShareButton = ({ radioshowId }: { radioshowId: number }) => {
     <NavLink to={`/${radioshowId}/share`}>
       <Button
         className="pulse-button"
+        size="lg"
         variant="filled"
         radius={"lg"}
-        style={{ position: "fixed", right: 20, bottom: 20, zIndex: 1000 }}
+        style={{ position: "fixed", right: 25, bottom: 25, zIndex: 1000 }}
       >
         Share
       </Button>

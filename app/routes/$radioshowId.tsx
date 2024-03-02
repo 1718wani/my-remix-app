@@ -5,9 +5,11 @@ import { HighLightCard } from "~/features/Highlight/components/HighLightCard";
 import { json } from "@remix-run/node";
 import { getAllHighlights } from "~/features/Highlight/apis/getAllHighlights";
 import invariant from "tiny-invariant";
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { getRadioshowById } from "~/features/Radioshow/apis/getRadioshoById";
+import { updateHighlight } from "~/features/Highlight/apis/updateHighlight";
+import { EmptyHighlight } from "~/features/Highlight/components/EmptyHighlight";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   invariant(params.radioshowId, "Missing contactId param");
@@ -23,6 +25,36 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   return json({ radioshow, highlights });
 };
 
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const formData = await request.formData();
+  const played = formData.has("played")
+    ? formData.get("played") === "true"
+    : undefined;
+  const saved = formData.has("saved")
+    ? formData.get("saved") === "true"
+    : undefined;
+  const liked = formData.has("liked")
+    ? formData.get("liked") === "true"
+    : undefined;
+
+  const highlightId = Number(formData.get("id"));
+
+  try {
+    const updateResult = await updateHighlight(
+      // highlightId,
+      highlightId,
+      request,
+      played,
+      saved,
+      liked
+    );
+    return json({ success: true, updateResult });
+  } catch (error) {
+    return json({ success: false, error: "Failed to update highlight." });
+  }
+};
+
+// userId一致だけ抜き出しているので、今は0番目だけ抜き出して表示している。
 export default function Highlights() {
   const { radioshow, highlights } = useLoaderData<typeof loader>();
   return (
@@ -32,20 +64,38 @@ export default function Highlights() {
         radioshowTitle={radioshow.title}
       />
       <>
-        <Grid mt={10} mx={"sm"} justify="center">
-          {highlights.map((highlight) => (
-            <Grid.Col
-              key={highlight.description}
-              span={{ base: 11, md: 6, lg: 3 }}
-            >
-              <HighLightCard
-                title={highlight.title}
-                description={highlight.description}
-                playUrl={highlight.replayUrl}
-              />
-            </Grid.Col>
-          ))}
-        </Grid>
+        {highlights.length > 0 ? (
+          <Grid mt={10} mx={"sm"} justify="center">
+            {highlights.map((highlight) => (
+              <Grid.Col key={highlight.id} span={{ base: 11, md: 6, lg: 3 }}>
+                <HighLightCard
+                  id={highlight.id}
+                  title={highlight.title}
+                  description={highlight.description}
+                  playUrl={highlight.replayUrl}
+                  createdAt={highlight.createdAt}
+                  liked={
+                    highlight.userHighlights[0]
+                      ? highlight.userHighlights[0].liked
+                      : false
+                  }
+                  saved={
+                    highlight.userHighlights[0]
+                      ? highlight.userHighlights[0].saved
+                      : false
+                  }
+                  played={
+                    highlight.userHighlights[0]
+                      ? highlight.userHighlights[0].played
+                      : false
+                  }
+                />
+              </Grid.Col>
+            ))}
+          </Grid>
+        ) : (
+          <EmptyHighlight />
+        )}
       </>
 
       <ShareButton radioshowId={radioshow.id} />

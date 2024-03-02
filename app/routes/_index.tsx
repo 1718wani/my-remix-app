@@ -31,6 +31,7 @@ export default function Index() {
           <Grid.Col key={card.id} span={{ base: 11, md: 6, lg: 3 }}>
             <RadioShowsCard
               key={card.id}
+              id={card.id.toString() }
               imageUrl={card.imageUrl ?? "https://picsum.photos/200/300"}
               title={card.title}
               
