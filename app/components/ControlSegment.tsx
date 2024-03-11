@@ -6,7 +6,7 @@ export const ControlSegment = () => {
       m={"sm"}
       radius="sm"
       size="sm"
-      data={["All", "Favorite", "New"]}
+      data={["New", "Saved", "All"]}
     />
   );
 };
