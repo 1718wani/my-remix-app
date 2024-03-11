@@ -1,5 +1,5 @@
 import { Box, Flex, Text, Button, TextInput, Menu } from "@mantine/core";
-import { Form, Link } from "@remix-run/react";
+import { Form, Link, NavLink } from "@remix-run/react";
 
 export const HeaderComponent = () => {
   return (
@@ -16,6 +16,12 @@ export const HeaderComponent = () => {
           </Menu.Target>
 
           <Menu.Dropdown>
+            <Menu.Item>
+              <NavLink to="/radioshows" style={{ textDecoration: "none" , color: "currentColor",}}>
+                番組一覧
+              </NavLink>
+            </Menu.Item>
+            <Menu.Divider />
             <Menu.Item component="div">
               <Form action="/logout" method="post" style={{ margin: 0 }}>
                 <input
@@ -28,7 +34,6 @@ export const HeaderComponent = () => {
                     padding: 0,
                     margin: 0,
                     cursor: "pointer",
-                
                   }}
                 />
               </Form>
