@@ -1,6 +1,6 @@
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
-import { Button, Stack, TextInput, Title } from "@mantine/core";
+import { Autocomplete, Button, Stack, TextInput, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import {
   ActionFunctionArgs,
@@ -10,36 +10,58 @@ import {
 } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { IconX } from "@tabler/icons-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { authenticator } from "~/features/Auth/services/authenticator";
-import { RadioShowHeader } from "~/features/Highlight/components/RadioShowHeader";
-import invariant from "tiny-invariant";
 import { createHighlight } from "~/features/Highlight/apis/createHighlight";
 import { validateHighlightData } from "~/features/Highlight/functions/validateHighlightData";
-import { getRadioshowById } from "~/features/Radioshow/apis/getRadioshoById";
+import { getAllRadioshows } from "~/features/Radioshow/apis/getAllRadioshows";
 
-export const loader = async ({ params, request }:LoaderFunctionArgs) => {
-  invariant(params.radioshowId, "Missing contactId param");
-  const radioshowId = parseInt(params.radioshowId, 10);
-  invariant(!isNaN(radioshowId), "radioshowId must be a number");
-  const radioshow = await getRadioshowById(radioshowId);
-  invariant(radioshow, "radioshow not found");
- 
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const radioshows = await getAllRadioshows();
   const user = await authenticator.isAuthenticated(request, {
     failureRedirect: "/signin",
   });
-  return json({ user, radioshow });
+  return json({ user, radioshows });
 };
 
-export async function action({ params, request }: ActionFunctionArgs) {
-  invariant(params.radioshowId, "Missing contactId param");
+export const schemaForHighlightShare = (
+  radioshowsData: { label: string; value: string }[]
+) => {
+  return z.object({
+    title: z.string({ required_error: "タイトルは必要です" }),
+    description: z.string().default("").optional(),
+    replayUrl: z
+      .string({ required_error: "再生用URLが必要です" })
+      .url({ message: "再生用URLは有効なURL形式である必要があります" }),
+    radioshowData: z
+      .string({ required_error: "番組名は必要です" })
+      .min(1, "番組名は少なくとも1文字以上である必要があります")
+      .refine((value) => radioshowsData.some((show) => show.label === value), {
+        message: "選択された番組名は一覧に含まれていません",
+      })
+      // ステップ2: バリデーション成功後に値を変換
+      .transform((value) => {
+        // `radioshowsData`から対応する`value`（ID）を見つける
+        const matchingShow = radioshowsData.find(
+          (show) => show.label === value
+        );
+        // 見つかった場合はその`value`（ID）を返す
+        return matchingShow ? Number(matchingShow.value) : undefined;
+      }),
+  });
+};
+
+export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
-  const newFormData = Object.fromEntries(formData);
+  const radioshows = await getAllRadioshows();
+  const radioshowsData = radioshows.map((show) => ({
+    value: show.id.toString(),
+    label: show.title,
+  }));
+  const schema : z.ZodTypeAny = schemaForHighlightShare(radioshowsData)
+
   const submission = parseWithZod(formData, { schema });
-  // radioshowIdを数値型に変換
-  const radioshowId = parseInt(params.radioshowId, 10);
-  invariant(!isNaN(radioshowId), "radioshowId must be a number");
 
   if (submission.status !== "success") {
     return json({
@@ -49,10 +71,9 @@ export async function action({ params, request }: ActionFunctionArgs) {
     });
   }
 
-  const highlightData = {
-    ...newFormData,
-    radioshowId: radioshowId, // 数値型に変換したradioshowIdを追加
-  };
+  const highlightData = submission.value
+  console.log(highlightData,"送信されたFormData");
+
   // highlightDataがcreateHighlightType型に合致するか検証
   try {
     validateHighlightData(highlightData);
@@ -62,21 +83,23 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
   await createHighlight(highlightData, request);
 
-  return redirect(`/${radioshowId}`);
+  return redirect("/");
 }
 
-const schema = z.object({
-  title: z.string({ required_error: "タイトルは必要です" }),
-  description: z.string().default("").optional(),
-  replayUrl: z
-    .string({ required_error: "再生用URLが必要です" })
-    .url({ message: "再生用URLは有効なURL形式である必要があります" }),
-});
-
 export default function HightlightShare() {
-  const { radioshow } = useLoaderData<typeof loader>();
+  const [selectedRadioshow, setSelectedRadioshow] = useState("");
+
+  const { radioshows } = useLoaderData<typeof loader>();
+  const radioshowsData = radioshows.map((show) => ({
+    value: show.id.toString(),
+    label: show.title,
+  }));
+
   const data = useActionData<typeof action>();
-  const [form, { title, description, replayUrl }] = useForm({
+
+  const schema : z.ZodTypeAny = schemaForHighlightShare(radioshowsData);
+
+  const [form, { title, description, replayUrl, radioshowData }] = useForm({
     onValidate({ formData }) {
       return parseWithZod(formData, { schema });
     },
@@ -109,13 +132,26 @@ export default function HightlightShare() {
 
   return (
     <>
-      <RadioShowHeader
-        radioshowImageUrl={radioshow.imageUrl}
-        radioshowTitle={radioshow.title}
-      />
       <Form method="post" {...getFormProps(form)}>
         <Stack gap="md" mx={"xl"} mt={"lg"}>
           <Title order={2}>ハイライトシェア</Title>
+          <Autocomplete
+            label="番組名"
+            placeholder="番組名"
+            data={radioshowsData}
+            maxDropdownHeight={200}
+            required
+            value={selectedRadioshow}
+            onChange={setSelectedRadioshow}
+            error={radioshowData.errors}
+          />
+          {/* 隠しフィールドを追加して、選択された番組IDを送信 */}
+          <input
+            type="hidden"
+            name="radioshowData"
+            value={selectedRadioshow}
+          />
+
           <TextInput
             {...getInputProps(title, { type: "text" })}
             name="title"
