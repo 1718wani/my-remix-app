@@ -1,6 +1,11 @@
 import { prisma } from "~/libs/db";
 
-export const getAllHighlights = async (radioshowId: number, userId?: string) => {
+export const getHighlightsForRadioshow = async (
+  radioshowId: number,
+  userId?: string,
+  skip?: number,
+  take?: number
+) => {
   const highlights = await prisma.highlight.findMany({
     where: { radioshowId },
     include: {
@@ -15,6 +20,8 @@ export const getAllHighlights = async (radioshowId: number, userId?: string) => 
         },
       },
     },
+    skip: skip,
+    take: take,
   });
   return highlights;
 };

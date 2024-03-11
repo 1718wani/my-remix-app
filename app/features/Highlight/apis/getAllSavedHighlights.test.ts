@@ -25,17 +25,13 @@ jest.mock("~/libs/db", () => ({
 describe('getAllSavedHighlights', () => {
   it('fetches saved highlights for a given user and radioshow', async () => {
     const userId = 'user1';
-    const radioshowId = 1;
 
-    const savedHighlights = await getAllSavedHighlights(userId, radioshowId);
+    const savedHighlights = await getAllSavedHighlights(userId);
 
     expect(prisma.userHighlight.findMany).toHaveBeenCalledWith({
       where: {
         userId: userId,
-        saved: true,
-        highlights: {
-          radioshowId: radioshowId,
-        },
+        saved: true
       },
       include: {
         highlights: true,
@@ -51,7 +47,6 @@ describe('getAllSavedHighlights', () => {
         highlights: {
           id: 1,
           title: 'Test Highlight',
-          radioshowId: 1,
         },
       },
     ]);

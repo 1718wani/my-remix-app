@@ -1,21 +1,14 @@
 import { prisma } from "~/libs/db";
 
-export const getAllSavedHighlights = async (
-  userId: string,
-  radioshowId: number
-) => {
+export const getAllSavedHighlights = async (userId: string) => {
   const savedHighlights = await prisma.userHighlight.findMany({
     where: {
-      userId: userId, 
+      userId: userId,
       saved: true,
-      highlights: {
-        radioshowId: radioshowId, 
-      },
     },
     include: {
-      highlights: true, 
+      highlights: true,
     },
   });
-
   return savedHighlights;
 };
