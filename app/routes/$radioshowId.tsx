@@ -3,13 +3,13 @@ import { RadioShowHeader } from "~/features/Highlight/components/RadioShowHeader
 import { Grid } from "@mantine/core";
 import { HighLightCard } from "~/features/Highlight/components/HighLightCard";
 import { json } from "@remix-run/node";
-import { getAllHighlights } from "~/features/Highlight/apis/getAllHighlights";
 import invariant from "tiny-invariant";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { getRadioshowById } from "~/features/Radioshow/apis/getRadioshoById";
 import { updateHighlight } from "~/features/Highlight/apis/updateHighlight";
 import { EmptyHighlight } from "~/features/Highlight/components/EmptyHighlight";
+import { getHighlightsForRadioshow } from "~/features/Highlight/apis/getHighlightsForRadioshow";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   invariant(params.radioshowId, "Missing contactId param");
@@ -18,7 +18,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   const radioshow = await getRadioshowById(radioshowId);
   invariant(radioshow, "Radioshow not found");
 
-  const highlights = await getAllHighlights(radioshowId);
+  const highlights = await getHighlightsForRadioshow(radioshowId);
   if (!highlights) {
     throw new Response("Not Found", { status: 404 });
   }

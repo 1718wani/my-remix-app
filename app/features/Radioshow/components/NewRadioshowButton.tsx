@@ -9,7 +9,7 @@ export const NewRadioshowButton = () => {
         size="lg"
         variant="filled"
         radius={"lg"}
-        style={{ position: "fixed", right: 25, bottom: 25, zIndex: 1000 }}
+        style={{ position: "fixed", right: 30, bottom: 50, zIndex: 1000 }}
       >
         新規登録
       </Button>

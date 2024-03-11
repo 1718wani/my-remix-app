@@ -10,7 +10,7 @@ export const updateHighlight = async (
 ) => {
   const userId = await authenticator.isAuthenticated(request);
   if (!userId) {
-    throw new Error("User not authenticated");
+    return { error: "User not authenticated", authenticated: false };
   }
 
   const update = await prisma.userHighlight.upsert({
