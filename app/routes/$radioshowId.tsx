@@ -98,7 +98,7 @@ export default function Highlights() {
         )}
       </>
 
-      <ShareButton radioshowId={radioshow.id} />
+      <ShareButton />
     </>
   );
 }
