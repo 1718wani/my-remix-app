@@ -26,6 +26,8 @@ type props = {
   played: boolean;
   imageUrl: string;
   radioshowId: number;
+  isEnabledUserAction: boolean;
+  open: () => void;
 };
 
 export const HighLightCardWithRadioshow = (props: props) => {
@@ -42,7 +44,9 @@ export const HighLightCardWithRadioshow = (props: props) => {
     played,
     imageUrl,
     radioshowTitle,
-    radioshowId
+    radioshowId,
+    isEnabledUserAction,
+    open,
   } = props;
   const theme = useMantineTheme();
 
@@ -89,12 +93,7 @@ export const HighLightCardWithRadioshow = (props: props) => {
             )}
           </Group>
           <Link to={`/${radioshowId}`} style={{ textDecoration: "none" }}>
-            <Text
-              size="sm"
-              fw={700}
-              c={"gray.5"}
-              td="underline"
-            >
+            <Text size="sm" fw={700} c={"gray.5"} td="underline">
               {radioshowTitle}の一覧
             </Text>
           </Link>
@@ -105,7 +104,15 @@ export const HighLightCardWithRadioshow = (props: props) => {
             {title}
           </Text>
           <Group align={"center"} gap={6}>
-            <fetcher.Form method="post">
+            <fetcher.Form
+              method="post"
+              onClick={(e) => {
+                if (!isEnabledUserAction) {
+                  e.preventDefault(); 
+                  open(); 
+                }
+              }}
+            >
               <input type="hidden" name="id" value={id} />
               <button
                 name="liked"
@@ -126,7 +133,15 @@ export const HighLightCardWithRadioshow = (props: props) => {
               </button>
             </fetcher.Form>
 
-            <fetcher.Form method="post">
+            <fetcher.Form
+              method="post"
+              onClick={(e) => {
+                if (!isEnabledUserAction) {
+                  e.preventDefault(); // フォームの送信を防ぐ
+                  open(); // ログインモーダルを開く
+                }
+              }}
+            >
               <input type="hidden" name="id" value={id} />
               <button
                 type="submit"
