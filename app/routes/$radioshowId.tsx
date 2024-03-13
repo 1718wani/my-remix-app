@@ -10,8 +10,10 @@ import { getRadioshowById } from "~/features/Radioshow/apis/getRadioshoById";
 import { updateHighlight } from "~/features/Highlight/apis/updateHighlight";
 import { EmptyHighlight } from "~/features/Highlight/components/EmptyHighlight";
 import { getHighlightsForRadioshow } from "~/features/Highlight/apis/getHighlightsForRadioshow";
+import { authenticator } from "~/features/Auth/services/authenticator";
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
+  const userId = await authenticator.isAuthenticated(request, {});
   invariant(params.radioshowId, "Missing contactId param");
   const radioshowId = parseInt(params.radioshowId, 10);
   invariant(!isNaN(radioshowId), "radioshowId must be a number");
@@ -22,7 +24,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   if (!highlights) {
     throw new Response("Not Found", { status: 404 });
   }
-  return json({ radioshow, highlights });
+  return json({ radioshow, highlights, userId });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -56,7 +58,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 // userId一致だけ抜き出しているので、今は0番目だけ抜き出して表示している。
 export default function Highlights() {
-  const { radioshow, highlights } = useLoaderData<typeof loader>();
+  const { radioshow, highlights, userId } = useLoaderData<typeof loader>();
   return (
     <>
       <RadioShowHeader
@@ -98,7 +100,7 @@ export default function Highlights() {
         )}
       </>
 
-      <ShareButton />
+      <ShareButton userId={userId} />
     </>
   );
 }
