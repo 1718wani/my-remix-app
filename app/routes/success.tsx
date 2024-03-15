@@ -12,9 +12,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function Success() {
   return (
     <>
-      <Center mt={"xl"}>
+      <Center my={"xl"}>
         <Stack>
-          <Title order={2}>ログインが成功しました</Title>
+          <Center>
+            <Title order={2}>ログインが成功しました</Title>
+          </Center>
+
           <Center>
             <Link to="/" style={{ textDecoration: "none" }}>
               <Text
@@ -27,15 +30,15 @@ export default function Success() {
               </Text>
             </Link>
           </Center>
+          <Image
+            width="40"
+            height="auto"
+            fit="cover"
+            src="/greenlisteninggirl.png"
+            alt="success"
+          />
         </Stack>
       </Center>
-      <Image
-        width="40"
-        height="auto"
-        fit="cover"
-        src="/greenlisteninggirl.png"
-        alt="success"
-      />
     </>
   );
 }
