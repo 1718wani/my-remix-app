@@ -40,7 +40,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await authenticator.isAuthenticated(request, {});
-  const highlightsWithRadioshow = await getNewHighlights(request,0);
+  const highlightsWithRadioshow = await getNewHighlights(request, 0);
   if (!highlightsWithRadioshow) {
     throw new Response("Not Found", { status: 404 });
   }
@@ -55,7 +55,7 @@ export default function NewHighlights() {
 
   return (
     <>
-      <Grid mt={10} mx={"sm"} >
+      <Grid mt={10} mx={"sm"}>
         {data.highlightsWithRadioshow.map((highlight) => (
           <Grid.Col key={highlight.id} span={{ base: 12, md: 6, lg: 3 }}>
             <HighLightCardWithRadioshow
@@ -84,6 +84,7 @@ export default function NewHighlights() {
                   ? highlight.userHighlights[0].played
                   : false
               }
+              totalReplayTimes={highlight.totalReplayTimes}
               radioshowId={highlight.radioshow.id}
               isEnabledUserAction={isEnabledUserAction}
               open={open}

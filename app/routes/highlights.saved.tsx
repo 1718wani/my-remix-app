@@ -40,7 +40,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await authenticator.isAuthenticated(request, {});
-  const highlightsWithRadioshow = await getSavedHighlights(request,0);
+  const highlightsWithRadioshow = await getSavedHighlights(request, 0);
   if (!highlightsWithRadioshow) {
     throw new Response("Not Found", { status: 404 });
   }
@@ -55,7 +55,7 @@ export default function HightlightsSaved() {
 
   return (
     <>
-      <Grid mt={10} mx={"sm"} >
+      <Grid mt={10} mx={"sm"}>
         {data.highlightsWithRadioshow.map((highlight) => (
           <Grid.Col key={highlight.id} span={{ base: 12, md: 6, lg: 3 }}>
             <HighLightCardWithRadioshow
@@ -85,6 +85,7 @@ export default function HightlightsSaved() {
                   : false
               }
               radioshowId={highlight.radioshow.id}
+              totalReplayTimes={highlight.totalReplayTimes}
               isEnabledUserAction={isEnabledUserAction}
               open={open}
             />

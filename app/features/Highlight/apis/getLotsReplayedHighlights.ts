@@ -1,7 +1,7 @@
 import { authenticator } from "~/features/Auth/services/authenticator";
 import { prisma } from "~/libs/db";
 
-export const getViewedHighlights = async (request: Request, skip: number) => {
+export const getLotsReplayedHighlights = async (request: Request, skip: number) => {
   const userId = await authenticator.isAuthenticated(request);
 
   const highlights = await prisma.highlight.findMany({
@@ -21,7 +21,7 @@ export const getViewedHighlights = async (request: Request, skip: number) => {
         : {},
     },
     orderBy: {
-      Views: "desc",
+      totalReplayTimes: "desc",
     },
     skip: skip,
     take: 30,

@@ -9,9 +9,10 @@ import {
   Button,
   Badge,
   Image,
+  rem,
 } from "@mantine/core";
 import { Link, useFetcher } from "@remix-run/react";
-import { IconBookmark, IconHeart } from "@tabler/icons-react";
+import { IconBookmark, IconHeadphones, IconHeart } from "@tabler/icons-react";
 import { parseISO, isWithinInterval, add } from "date-fns";
 
 type props = {
@@ -26,6 +27,7 @@ type props = {
   played: boolean;
   imageUrl: string;
   radioshowId: number;
+  totalReplayTimes: number;
   isEnabledUserAction: boolean;
   open: () => void;
 };
@@ -45,6 +47,7 @@ export const HighLightCardWithRadioshow = (props: props) => {
     imageUrl,
     radioshowTitle,
     radioshowId,
+    totalReplayTimes,
     isEnabledUserAction,
     open,
   } = props;
@@ -108,8 +111,8 @@ export const HighLightCardWithRadioshow = (props: props) => {
               method="post"
               onClick={(e) => {
                 if (!isEnabledUserAction) {
-                  e.preventDefault(); 
-                  open(); 
+                  e.preventDefault();
+                  open();
                 }
               }}
             >
@@ -175,7 +178,18 @@ export const HighLightCardWithRadioshow = (props: props) => {
           </Accordion.Item>
         </Accordion>
 
-        <Flex justify="flex-end" mx={"sm"} style={{ width: "100%" }}>
+        <Flex
+          justify="space-between"
+          align={"center"}
+          mt={"md"}
+          style={{ width: "100%" }}
+        >
+          <Flex justify={"left"} pl={"sm"} align={"center"} gap={rem(3)}>
+            <IconHeadphones size={20} stroke={2} color="gray" />
+            <Text mt={2} size="sm" c={"gray"}>
+              {totalReplayTimes}
+            </Text>
+          </Flex>
           <Button
             radius="xl"
             component="a"
@@ -187,8 +201,6 @@ export const HighLightCardWithRadioshow = (props: props) => {
               to: "rgba(87, 70, 70, 1)",
               deg: 158,
             }}
-            mt={"sm"}
-            mx={"lg"}
           >
             Spotifyで再生する
           </Button>

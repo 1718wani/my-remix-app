@@ -19,7 +19,7 @@ export default function Success() {
           </Center>
 
           <Center>
-            <Link to="/" style={{ textDecoration: "none" }}>
+            <Link to="/highlights/popular" style={{ textDecoration: "none" }}>
               <Text
                 size="sm"
                 variant="gradient"
