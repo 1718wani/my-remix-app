@@ -27,6 +27,7 @@ type props = {
   played: boolean;
   imageUrl: string;
   radioshowId: number;
+  totalReplayTimes: number;
   isEnabledUserAction: boolean;
   open: () => void;
 };
@@ -46,6 +47,7 @@ export const HighLightCardWithRadioshow = (props: props) => {
     imageUrl,
     radioshowTitle,
     radioshowId,
+    totalReplayTimes,
     isEnabledUserAction,
     open,
   } = props;
@@ -183,9 +185,9 @@ export const HighLightCardWithRadioshow = (props: props) => {
           style={{ width: "100%" }}
         >
           <Flex justify={"left"} pl={"sm"} align={"center"} gap={rem(3)}>
-            <IconHeadphones size={20} stroke={2} color="gray"  />
+            <IconHeadphones size={20} stroke={2} color="gray" />
             <Text mt={2} size="sm" c={"gray"}>
-              再生
+              {totalReplayTimes}
             </Text>
           </Flex>
           <Button

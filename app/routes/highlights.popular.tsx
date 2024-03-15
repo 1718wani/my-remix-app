@@ -2,7 +2,7 @@ import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
 import { Button, Center, Grid } from "@mantine/core";
 import { useLoaderData } from "@remix-run/react";
 import { HighLightCardWithRadioshow } from "~/features/Highlight/components/HighLightCardWithRadioshow";
-import { getViewedHighlights } from "~/features/Highlight/apis/getViewedHighlights";
+import { getLotsReplayedHighlights } from "~/features/Highlight/apis/getLotsReplayedHighlights";
 import { updateHighlight } from "~/features/Highlight/apis/updateHighlight";
 import { useDisclosure } from "@mantine/hooks";
 import { LoginNavigateModal } from "~/features/Auth/components/LoginNavigateModal";
@@ -40,7 +40,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await authenticator.isAuthenticated(request, {});
-  const highlightsWithRadioshow = await getViewedHighlights(request, 0);
+  const highlightsWithRadioshow = await getLotsReplayedHighlights(request, 0);
   if (!highlightsWithRadioshow) {
     throw new Response("Not Found", { status: 404 });
   }
@@ -55,7 +55,7 @@ export default function HightlightsPopular() {
 
   return (
     <>
-      <Grid mt={10} mx={"sm"} >
+      <Grid mt={10} mx={"sm"}>
         {data.highlightsWithRadioshow.map((highlight) => (
           <Grid.Col key={highlight.id} span={{ base: 12, md: 6, lg: 3 }}>
             <HighLightCardWithRadioshow
@@ -85,6 +85,7 @@ export default function HightlightsPopular() {
                   : false
               }
               radioshowId={highlight.radioshow.id}
+              totalReplayTimes={highlight.totalReplayTimes}
               isEnabledUserAction={isEnabledUserAction}
               open={open}
             />
