@@ -1,6 +1,6 @@
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
-import { Autocomplete, Button, Stack, TextInput, Title } from "@mantine/core";
+import { Autocomplete, Button, Stack, Text, TextInput, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import {
   ActionFunctionArgs,
@@ -8,7 +8,7 @@ import {
   json,
   redirect,
 } from "@remix-run/node";
-import { Form, useActionData, useLoaderData } from "@remix-run/react";
+import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import { IconX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
@@ -177,6 +177,16 @@ export default function HightlightShare() {
             error={replayUrl.errors}
             required
           />
+          <Link to="/create" style={{ textDecoration: "none" }}>
+            <Text
+              size="sm"
+              variant="gradient"
+              fw={700}
+              gradient={{ from: "blue", to: "blue.3" }}
+            >
+              番組名が見つからない場合はこちらから作成してください
+            </Text>
+          </Link>
           <Button fullWidth type="submit">
             ハイライトをシェア
           </Button>

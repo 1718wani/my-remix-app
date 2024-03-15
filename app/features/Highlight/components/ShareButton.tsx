@@ -1,11 +1,29 @@
 import { Button } from "@mantine/core";
-import { NavLink } from "@remix-run/react";
-import "./ShareButton.module.css"
+import { useNavigate } from "@remix-run/react";
+import "./ShareButton.module.css";
+import { useDisclosure } from "@mantine/hooks";
+import { LoginNavigateModal } from "~/features/Auth/components/LoginNavigateModal";
 
-export const ShareButton = () => {
+interface shareButtonType  {
+   userId: string|null
+}
+
+export const ShareButton = (props : shareButtonType) => {
+  const [opened, { open, close }] = useDisclosure(false);
+  const navigate = useNavigate();
+
   return (
-    <NavLink to={"/highlight-share"}>
+    <>
       <Button
+        onClick={(e) => {
+          if (!props.userId) {
+            e.preventDefault();
+            console.log("開いている");
+            open();
+          } else {
+            navigate("/highlight-share");
+          }
+        }}
         className="pulse-button"
         size="lg"
         variant="filled"
@@ -14,6 +32,8 @@ export const ShareButton = () => {
       >
         Share
       </Button>
-    </NavLink>
+
+      <LoginNavigateModal opened={opened} close={close} />
+    </>
   );
 };
