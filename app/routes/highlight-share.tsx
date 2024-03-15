@@ -177,7 +177,7 @@ export default function HightlightShare() {
             error={replayUrl.errors}
             required
           />
-          <Link to="/create" style={{ textDecoration: "none" }}>
+          <Link to="/create" style={{ textDecoration: "none", width:"fit-content" }}>
             <Text
               size="sm"
               variant="gradient"
