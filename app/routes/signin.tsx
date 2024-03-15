@@ -139,7 +139,7 @@ export default function Signin() {
             error={password.errors}
           />
 
-          <Link to="/signup" style={{ textDecoration: "none" }}>
+          <Link to="/signup" style={{ textDecoration: "none", width:"fit-content" }}>
             <Text
               size="sm"
               variant="gradient"
