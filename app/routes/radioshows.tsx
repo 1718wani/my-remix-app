@@ -16,9 +16,9 @@ export default function Radioshows() {
   const data = useLoaderData<typeof loader>();
   return (
     <>
-      <Grid mt={10} mx={"sm"} justify="center">
+      <Grid mt={10} mx={"sm"}>
         {data.radioShows.map((card) => (
-          <Grid.Col key={card.id} span={{ base: 11, md: 6, lg: 3 }}>
+          <Grid.Col key={card.id} span={{ base: 12, md: 6, lg: 3 }}>
             <RadioShowsCard
               key={card.id}
               id={card.id.toString()}

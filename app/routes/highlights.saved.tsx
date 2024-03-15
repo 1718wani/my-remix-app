@@ -55,9 +55,9 @@ export default function HightlightsSaved() {
 
   return (
     <>
-      <Grid mt={10} mx={"sm"} justify="center">
+      <Grid mt={10} mx={"sm"} >
         {data.highlightsWithRadioshow.map((highlight) => (
-          <Grid.Col key={highlight.id} span={{ base: 11, md: 6, lg: 3 }}>
+          <Grid.Col key={highlight.id} span={{ base: 12, md: 6, lg: 3 }}>
             <HighLightCardWithRadioshow
               key={highlight.id}
               id={highlight.id}

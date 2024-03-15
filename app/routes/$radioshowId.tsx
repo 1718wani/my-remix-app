@@ -67,9 +67,9 @@ export default function Highlights() {
       />
       <>
         {highlights.length > 0 ? (
-          <Grid mt={10} mx={"sm"} justify="center">
+          <Grid mt={10} mx={"sm"} >
             {highlights.map((highlight) => (
-              <Grid.Col key={highlight.id} span={{ base: 11, md: 6, lg: 3 }}>
+              <Grid.Col key={highlight.id} span={{ base: 12, md: 6, lg: 3 }}>
                 <HighLightCard
                   id={highlight.id}
                   title={highlight.title}
