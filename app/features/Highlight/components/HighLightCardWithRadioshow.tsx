@@ -45,7 +45,6 @@ export const HighLightCardWithRadioshow = (props: props) => {
     saved,
     played,
     imageUrl,
-    radioshowTitle,
     radioshowId,
     totalReplayTimes,
     isEnabledUserAction,
@@ -75,16 +74,18 @@ export const HighLightCardWithRadioshow = (props: props) => {
     <>
       <Card withBorder padding="md" radius="md" mx={"sm"}>
         <Card.Section mb={"sm"}>
-          <Image
-            src={imageUrl}
-            fallbackSrc="https://placehold.co/600x400?text=Placeholder"
-            h={160}
-          />
+          <Link to={`/${radioshowId}`}>
+            <Image
+              src={imageUrl}
+              fallbackSrc="https://placehold.co/600x400?text=Placeholder"
+              h={160}
+            />
+          </Link>
         </Card.Section>
         <Flex justify={"space-between"}>
           <Group>
             {played && (
-              <Badge w="fit-content" variant="light">
+              <Badge w="fit-content" variant="light" c={"gray"}>
                 再生済み
               </Badge>
             )}
@@ -95,11 +96,6 @@ export const HighLightCardWithRadioshow = (props: props) => {
               </Badge>
             )}
           </Group>
-          <Link to={`/${radioshowId}`} style={{ textDecoration: "none" }}>
-            <Text size="sm" fw={700} c={"gray.5"} td="underline">
-              {radioshowTitle}の一覧
-            </Text>
-          </Link>
         </Flex>
 
         <Flex justify={"space-between"} align={"baseline"} mx={"sm"}>
