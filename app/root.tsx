@@ -2,11 +2,8 @@
 // All packages except `@mantine/hooks` require styles imports
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
-import { cssBundleHref } from "@remix-run/css-bundle";
-import type { LinksFunction } from "@remix-run/node";
 import {
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,
@@ -21,10 +18,6 @@ import {
 import { HeaderComponent } from "./components/HeaderComponent";
 import { Notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
-
-export const links: LinksFunction = () => [
-  ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
-];
 
 export default function App() {
   const navigation = useNavigation();
@@ -66,7 +59,6 @@ export default function App() {
           <Outlet />
           <ScrollRestoration />
           <Scripts />
-          <LiveReload />
         </MantineProvider>
       </body>
     </html>
